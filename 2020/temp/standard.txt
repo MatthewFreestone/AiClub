@@ -1,0 +1,70 @@
+----------------------
+ BOARD REPRESENTATION
+----------------------
+The board's starting setup is
+kbnr
+pppp
+----
+----
+----
+----
+PPPP
+KBNR
+
+Uppercase letters represent white pieces, lowercase represent black pieces.  A hypen represents an unoccupied space
+k=king
+b=bishop
+n=knight
+r=rook
+p=pawn
+q=queen (not on starting board, but can be obtained by pawn promotion)
+
+The board's spaces will be referenced as integers in the range [0,31].  0 represents the upper left corner (where the black king starts), numbers go across rows and then down to the next row.  (i.e. the black rook starts on space 3, the black pawns start on spaces 4 through 7).
+
+----------------------
+ CONNECTING TO SERVER
+----------------------
+The server (which will be provided to you), has 3 open sockets:
+JOIN_EITHER
+JOIN_WHITE
+JOIN_BLACK
+
+These will be in the server configuration, so you can set them to whatever socket numbers you want.
+
+Connecting to one of these sockets will put you in the pool to find a game.  The server will not respond until it is time for you to make a move (i.e. a game has been found and, if black, your opponent has made a move).
+
+Connecting to JOIN_WHITE/JOIN_BLACK will ensure that you play as white/black.
+
+-----------------
+ SERVER RESPONSE
+-----------------
+When it is your turn to make a move, the server will pass you space-separated string, containing the board state, the game state (continuing, you won, your opponent won), and your opponent's last move
+	The board state will be represented as the board above, but without the newlines
+	The game state will be 0 if the game isn't over, 1 if your opponent has won, 2 if the game is a draw, and 3 if you have won
+	Your opponent's last move will be represented by two integers: where they moved from and where they moved to.  If there is no opponent's last move (white's first move or your move ended the game), the opponent's move will be -1 -1.  If your opponent forfeited, their last move will be -2 -2
+
+Example 1:
+kbnrpppp----------------PPPPKBNR 0 -1 -1
+This is the starting board state for white: all pieces in starting position, game isn't over (0), and opponent's last move is null (-1 -1)
+
+Example 2:
+---k-K---------R---------------- 1 12 15
+This represents a loss for black: his king is in checkmate, game is over as a loss (1), and opponent's last move was to move the rook across the row
+
+---------------
+ PASSING MOVES
+---------------
+After the server asks you for a move, you return your move as space-separated string of "from to promotion" where
+	-From is the number of the space you are moving from
+	-To is the number of the space you are moving to
+	-Promotion is the piece a pawn will promote to (so Q, B, N, or R) (ignores case) if this move causes a pawn promotion (for consistency, it is required every move).  If you don't want your bot to deal with this, feel free to always say "Q" or whatever
+
+If your move is invalid, the server will respond with "invalid", and wait for you to supply a new move (this allows training environments where the bots don't auto-lose for making an invalid move- if you want this, have your bot forfeit)
+
+To forfeit, give two negative numbers as your "from" and "to"
+
+-------------
+ CHESS RULES
+-------------
+Castling is allowed; the king moves to the C column and the rook moves to the B column.  To make this move, pass a move with the king going 2 spaces right.
+En passant is allowed

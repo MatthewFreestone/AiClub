@@ -1,0 +1,3 @@
+https://towardsdatascience.com/tensors-and-arrays-2611d48676d5
+https://www.tensorflow.org/guide/tensor
+https://link.springer.com/article/10.1007/s42452-019-1469-1#Tab1

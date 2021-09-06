@@ -1,0 +1,2 @@
+startconda
+jupyter notebook
